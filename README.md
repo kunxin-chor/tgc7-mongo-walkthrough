@@ -332,3 +332,180 @@ db.listingsAndReviews.find({
     'address.country':1
 }).pretty()
 ```
+
+# Create a database
+1. Use the new database
+```
+use animal_shelter
+```
+
+## General syntax for inserting into a collection
+
+The `animals` collection does not have to exist for us to insert into it.
+
+```
+db.animals.insert({
+    'name':'Fluffy',
+    'age': 3,
+    'breed':'Golden Retriever',
+    'type':'Dog'
+})
+```
+
+## Insert many
+```
+db.animals.insertMany([
+    {
+        'name':'Dazzy',
+        'age': 35,
+        'breed':'Greyhound',
+        'type':'Dog'
+    },
+    {
+        'name':'Timmy',
+        'age': 1,
+        'breed':'Border Collie',
+        'type':'Dog'
+    }
+])
+```
+
+## To Update by replacing the existing key with a new document
+```
+db.animals.update({
+    '_id':ObjectId("5f33aa91bf91d0dd5c1440de")
+}, {
+    "name" : "Timmy",
+    "age" : 1.5,
+    "breed" : "German Shepherd",
+    "type" : "Dog"
+})
+```
+
+## To update by specifying new values for specific fields:
+
+```
+db.animals.update({
+        '_id':ObjectId("5f33aa91bf91d0dd5c1440de")
+}, {
+    '$set': {
+        'name':'Thunder'
+    }
+})
+```
+
+## Delete
+```
+db.animals.remove({
+    '_id': ObjectId("5f33aa91bf91d0dd5c1440dd")
+})
+```
+
+## Managing collections 
+
+Let's say each dog has a checkup array.
+
+```
+db.animals.insert({
+    'name':'Cookie',
+    'age': 3,
+    'breed':'Lab Retriever',
+    'type':'Dog',
+    'checkups':[]
+})
+
+db.animals.insert({
+    'name':'Frenzy',
+    'age': 1,
+    'breed':'Wild Cat',
+    'type':'Cat',
+    'checkups':[
+        {
+            'id':ObjectId(),
+            'name': 'Dr Chua',
+            'diagnosis':'Heartworms',
+            'treatment':'Steriods'
+
+        }
+    ]
+})
+```
+
+### Add a new sub-document (i.e a new object) to an array
+Suppose Cookie visited a vet for the first time and we store the checkup information.
+
+(Adding a new element to an array)
+```
+db.animals.update({
+    '_id':ObjectId("5f33acfbbf91d0dd5c1440df"),
+}, {
+    '$push': {
+        'checkups': {
+            '_id':ObjectId(),
+            'name':'Dr Tan',
+            'diagnosis':'Diabetes',
+            'treatment':'Medication'
+        }
+    }
+})
+```
+
+### Remove a sub-document from an array
+
+Pull a checkup element by its id
+
+```
+db.animals.update({
+    '_id':ObjectId("5f33acfbbf91d0dd5c1440df")
+}, {
+    '$pull': {
+        'checkups': {
+              '_id':ObjectId("5f33addebf91d0dd5c1440e2")
+        }
+    }
+})
+```
+
+### Update an existing element in an array of a document
+
+We use `$elemMatch` in the critera to find the exact element in the array. And be sure 
+to use `$` to refer to the matched element later when we do the change.
+
+```
+db.animals.update({
+    'checkups': {
+        '$elemMatch': {
+            '_id': ObjectId("5f33b0e3bf91d0dd5c1440e4")
+        }
+    }
+}, {
+    '$set': {
+        'checkups.$.name':'Dr Su'
+    }
+})
+```
+
+Alternatively?
+
+```
+db.animals.update({
+    'checkups._id': ObjectId("5f33b0e3bf91d0dd5c1440e4")
+}, {
+    '$set': {
+        'checkups.$.name':'Dr Zhao',
+        'checkups.$.date': ISODate()
+    }
+})
+```
+
+
+## Unset a field
+```
+db.animals.update({
+    '_id':ObjectId("5f33acfbbf91d0dd5c1440df")
+}, {
+    '$unset': {
+        'date':""
+    }
+})
+```

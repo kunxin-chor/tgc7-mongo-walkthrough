@@ -1,39 +1,230 @@
-<img src="https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png" style="margin: 0;">
+# See all databases
 
-Welcome USER_NAME,
+```
+show databases
+```
+# Use a databases
 
-This is the Code Institute student template for Gitpod. We have preinstalled all of the tools you need to get started. You can safely delete this README.md file, or change it for your own project.
+```
+use sample_airbnb
+```
 
-## Gitpod Reminders
+The variable `db` will refer to the database we are using now
 
-To run a frontend (HTML, CSS, Javascript only) application in Gitpod, in the terminal, type:
+# Show the collections in a databases
+Collections are analgous to tables in SQL:
 
-`python3 -m http.server`
+```
+show collections
+```
 
-A blue button should appear to click: *Make Public*,
+# Queries
 
-Another blue button should appear to click: *Open Browser*.
+```
+db.listingsAndReviews.find()
+```
 
-To run a backend Python file, type `python3 app.py`, if your Python file is named `app.py` of course.
+In general, the generic structure of the command is:
 
-A blue button should appear to click: *Make Public*,
+```
+db.<collection_name>.find()
+```
 
-Another blue button should appear to click: *Open Browser*.
+Adding .pretty() allows us to format the output nicely.
 
-In Gitpod you have superuser security privileges by default. Therefore you do not need to use the `sudo` (superuser do) command in the bash terminal in any of the backend lessons.
+```
+db.listingsAndReviews.find().pretty()
+```
 
-## Updates Since The Instructional Video
+Adding .limit(x) to limit to the first x number of records.
 
-We continually tweak and adjust this template to help give you the best experience. Here are the updates since the original video was made:
+```
+db.listingsAndReviews.find().pretty().limit(2)
+```
 
-**April 16 2020:** The template now automatically installs MySQL instead of relying on the Gitpod MySQL image. The message about a Python linter not being installed has been dealt with, and the set-up files are now hidden in the Gitpod file explorer.
+## Find listings by critera
 
-**April 13 2020:** Added the _Prettier_ code beautifier extension instead of the code formatter built-in to Gitpod.
+Find all the listings with only 2 beds.
+```
+db.listingsAndReviews.find({
+    'beds': 2
+}).pretty().limit(5)
+```
+## Projecting
+Similiar to how we do "SELECT <columns>" in SQL, we can also say which fields in the results:
 
-**February 2020:** The initialisation files now _do not_ auto-delete. They will remain in your project. You can safely ignore them. They just make sure that your workspace is configured correctly each time you open it. It will also prevent the Gitpod configuration popup from appearing.
 
-**December 2019:** Added Eventyret's Bootstrap 4 extension. Type `!bscdn` in a HTML file to add the Bootstrap boilerplate. Check out the <a href="https://github.com/Eventyret/vscode-bcdn" target="_blank">README.md file at the official repo</a> for more options.
+Find all the listings with 2 beds and display only the name, the address and the beds
+```
+db.listingsAndReviews.find({
+    'beds':2
+}, {
+    'name':1, 'address':1, 'beds':1
+}).pretty().limit(5)
+```
 
---------
+Find all the lisings and display only the name, the number of the beds, and ONLY the country field from address
+```
+db.listingsAndReviews.find({
+    'beds':2
+}, {
+    'name':1,
+    'address.country':1,
+    'beds':1
+}).pretty().limit(5)
+```
 
-Happy coding!
+Find all the listings in the Brazil
+
+```
+db.listingsAndReviews.find({
+    'address.country':'Brazil'
+}, {
+    'name':1,
+    'address.counry':1,
+    'address.suburb':1,
+    'address.street':1
+}).pretty().limit(5);
+```
+
+## Find by multiple critera
+
+Add the new critera to the first argument to the `find` function. 
+
+To find listings with 2 beds and 2 bedrooms:
+
+```
+db.listingsAndReviews.find({
+    'beds': 2,
+    'bedrooms':2
+}, {
+    'name':1,
+    'beds':1,
+    'bedrooms':1
+}).pretty().limit(10)
+```
+
+## Find by a range or inequality
+
+We can `$gt` or `$lt` to represent greater than or less than.
+
+```
+db.listingsAndReviews.find({
+    'beds': {
+        '$gt':3
+    }
+}, {
+    'name':1,
+    'beds':1
+}).pretty().limit(10)
+```
+
+Find all listings with less than 3 beds:
+```
+db.listingsAndReviews.find({
+    'beds': {
+        '$lt':3
+    }
+}, {
+    'name':1,
+    'beds':1
+}).pretty().limit(10)
+```
+
+`$gte`is `greater than or equal` and `$lte` is lesser than or equal.
+
+```
+db.listingsAndReviews.find({
+    'beds':{
+        '$gte':4,
+        '$lte':8
+    }
+}, {
+    'beds':1,
+    'name':1
+}).pretty().limit(10)
+```
+
+Find listings with 3 bedrooms but with 4 to 6 beds:
+```
+db.listingsAndReviews.find({
+    'beds':{
+        '$gte':4,
+        '$lte':6
+    },
+    'bedrooms':3
+}, {
+    'beds':1,
+    'name':1,
+    'bedrooms':1
+}).pretty().limit(10)
+```
+
+We can actually simplify it like this:
+```
+let criteria = {
+    'beds':{
+        '$gte':4,
+        '$lte':6
+    },
+    'bedrooms':3
+};
+
+let projection = {
+    'beds':1,
+    'name':1,
+    'bedrooms':1
+};
+
+db.listingsAndReviews.find(criteria, projection);
+```
+
+## Find by an element in an array
+```
+db.listingsAndReviews.find({
+    'amenities':'Washer'
+},
+{
+    'name':1,
+    'amenities':1
+}).pretty().limit(5)
+```
+
+## Find by specific elements in an array
+Show all listings that have BOTH washer and dryers
+
+```
+db.listingsAndReviews.find({
+    'amenities': {
+        '$all':['Washer', 'Dryer']
+    }
+},
+{
+    'name':1,
+    'amenities':1
+}).pretty().limit(5)
+```
+
+## Find listings that include ONE of the specific elements in an array
+
+```
+db.listingsAndReviews.find({
+    'amenities':{
+        '$in':['TV', 'Cable TV']
+    }
+},{
+    'name':1,
+    'amenities':1
+}).pretty().limit(5)
+```
+
+```
+db.listingsAndReviews.find({
+    'amenities':{
+        '$in':['Kitchen', 'Mircowave']
+    }
+},{
+    'name':1,
+    'amenities':1
+}).pretty().limit(5)
+```

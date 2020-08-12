@@ -261,7 +261,7 @@ db.listingsAndReviews.find({
     }
 }, {
     'name':1,
-    'reviews':1
+    'reviews.$':1
 }).pretty().limit(5)
 ```
 

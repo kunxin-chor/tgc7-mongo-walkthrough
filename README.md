@@ -221,10 +221,114 @@ db.listingsAndReviews.find({
 ```
 db.listingsAndReviews.find({
     'amenities':{
-        '$in':['Kitchen', 'Mircowave']
+        '$in':['Kitchen', 'Microwave']
     }
 },{
     'name':1,
     'amenities':1
+}).pretty().limit(10)
+```
+
+## Find all listings that are either in Canada or Brazil
+```
+db.listingsAndReviews.find({
+    'address.country':{
+        '$in':['Brazil', 'Canada']
+    }
+}, {
+    'name':1,
+    'address.country':1
+}).pretty()
+
+```
+
+## How select by its objectId
+```
+use sample_mflix;
+db.movies.find({
+    '_id':ObjectId('573a1390f29313caabcd4803')
+}).pretty()
+```
+
+## Find all listings which have reviewd by Bart
+
+```
+db.listingsAndReviews.find({
+    'reviews':{
+        '$elemMatch': {
+            'reviewer_name':'Bart'
+        }
+    }
+}, {
+    'name':1,
+    'reviews':1
 }).pretty().limit(5)
+```
+
+## Match by string
+Something like `select * from customers where customerName like '%gift%'`
+
+Search for all listings which has 'spacious' in its name, regardless of casing
+
+```
+db.listingsAndReviews.find({
+    'name':{
+        '$regex':"Spacious", '$options':'i'
+    }
+}, {
+    'name':1
+})
+```
+
+## Count how many listings there are in total
+```
+db.listingsAndReviews.find().count()
+```
+
+## Show all listings that >= 6 amentities
+
+```
+db.listingsAndReviews.find({
+    'amenities.6': {
+        "$exists":true
+    }
+},{
+    'name':1, 'amenities':1
+}).pretty()
+```
+## Compounds criteras: 'AND' or 'OR' or 'NOT'
+
+Find all the listings in Brazil OR listings from Canada that has more than 5 bedrooms
+```
+db.listingsAndReviews.find({
+    '$or':[
+        {
+            'address.country':'Brazil'
+        },
+        {
+            'address.country':'Canada',
+            'bedrooms': {
+                '$gte':5
+            }
+        }
+    ]
+}, {
+    'name':1,
+    'bedrooms':1,
+    'address.country':1
+}).pretty()
+```
+
+### Find all listings NOT from Brazil or Canada
+```
+db.listingsAndReviews.find({
+   'address.country': {
+       '$not': {
+           $in:['Brazil', 'Canada']
+       }
+   }
+}, {
+    'name':1,
+    'address.country':1
+}).pretty()
 ```

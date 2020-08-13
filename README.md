@@ -539,6 +539,28 @@ Rememebr to replace the `<password>` in the connection string with your actual p
 
 2. Create `.env` file in the same folder as `app.py`
 
+3. Create a `.gitignore` file and its content should be
+
+```
+.env
+```
+
+# Remove .env from github if accidentically pushed
+
+1. Download BFG repo-cleaner and rename it as `bfg.jar`
+
+2. Upload to gitpod
+
+3. Add it to the .gitignore 
+
+4. Run the command in the terminal:
+
+```
+java -jar bfg.jar --delete-files .env .
+```
+
+5. Delete the report files when done
+
 # Generic Pesudo-code for CRUD 
 
 ## READ
@@ -547,3 +569,39 @@ Rememebr to replace the `<password>` in the connection string with your actual p
 
 2. Pass the data into the template
 
+## SEARCH
+
+1. Gather all the search terms (usually it's from the form)
+
+2. Create the query based on the search terms. If it helps, write the prototype query. Just write out one sample query
+
+3. Read in the data from the database using the modified query
+
+4. Pass the data to the template
+
+### Example using pymysql
+
+```
+def search():
+
+    # base query
+    sql = "SELECT * FROM listingsAndReviews WHERE 1"
+
+    # Get all the search terms from the form
+    required_name = request.form.get('name')
+
+    extra_params = []
+
+    # Define the critera
+    # Create the query base on the critera
+    if required_name:
+        sql += " AND name LIKE %s"
+        extra_params.append(required_name)
+
+    # Get the data from the database using the query
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute(sql, extra_params)
+
+    # Pass the datat to the template
+    return render_template('show_listings.template.html', listings=cursor)
+```

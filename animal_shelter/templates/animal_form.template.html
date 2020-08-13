@@ -1,3 +1,4 @@
+
     <div>
         <label>Name</label>
         <input type="text" name="name" class="form-control {% if 'name_too_short' in errors %} is-invalid {%endif%}" value="{{previous_values.name}}">
@@ -27,10 +28,9 @@
     </div>
     <div>
         <label>Type</label>        
-        <input type="text" name="type" class="form-control {%if 'type_too_short' in errors %} is-invalid {%endif%}" value="{{previous_values.type}}">
-         {%if 'type_too_short' in errors %}
-         <div class="invalid-feedback">
-            {{ errors.type_too_short}}
-         </div>            
-        {%endif%}
+        <select name="type" class="form-control">
+            {% for each_type in animal_types %}   
+            <option value="{{each_type._id}}" {% if previous_values and each_type._id==previous_values.type._id%} selected {%endif%}>{{each_type.name}}</option>
+            {% endfor %}
+        </select>
     </div>

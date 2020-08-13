@@ -1,0 +1,13 @@
+{% extends 'base.template.html' %}
+
+{% block content %}
+<h1>Editing {{animal.name}}'s checkup on {{animal.checkups[0].date.strftime('%d %B, %Y')}}
+<form method="POST">
+    {% with %}
+        {% set previous_values = animal.checkups[0] %}
+        {%include 'checkup_form.template.html' %}
+    {% endwith %}
+
+    <input type="submit" value="Update" class="btn btn-primary"/>
+</form>
+{% endblock %}

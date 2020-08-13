@@ -1,0 +1,31 @@
+{% extends 'base.template.html' %}
+
+{% block content %}
+
+<h1>Checkups Record for {{animal.name}}</h1>
+
+<a href="{{url_for('show_create_checkup', animal_id = animal._id)}}" class="btn btn-primary">Add new checkup</a>
+
+{% for each_checkup in animal.checkups %}
+<div class="card">
+    <div class="card-body">
+        <div class="card-title">
+             <h1>
+                 Date: {{ each_checkup.date }} by {{each_checkup.vet_name}}
+                 <a href="{{ url_for('show_edit_checkup', checkup_id=each_checkup._id) }}" class="btn btn-primary">Edit</a>
+                 <a href="{{ url_for('show_delete_checkup', checkup_id=each_checkup._id)}}" class="btn btn-danger">Delete</a>
+            </h1>
+        </div>
+        <h3>Diagnosis</h3>
+        <div>
+            {{each_checkup.diagnosis}}
+        </div>
+        <h3>Treatment</h3>
+        <div>
+            {{each_checkup.treatment}}
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}

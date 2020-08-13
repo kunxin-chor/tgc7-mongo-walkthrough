@@ -1,0 +1,20 @@
+    <div>
+        <label>Diagnosis</label>
+        <textarea name="diagnosis" class="form-control">{{previous_values.diagnosis}}</textarea>
+    </div>
+    <div>
+        <label>Treatment</label>
+        <textarea name="treatment" class="form-control">{{previous_values.treatment}}</textarea>
+    </div>
+    <div>
+        <label>Date</label>
+        <input type="date" class="form-control" name="date" {%if previous_values.date%} value="{{previous_values.date.strftime('%Y-%m-%d')}}" {%endif%}/>   
+    </div>
+    <div>
+        <label>Vet</label>
+        <select name="vet_id" class="form-control">
+        {% for each_vet in vets %}
+            <option value="{{each_vet._id}}" {%if each_vet._id == previous_values.vet_id%} selected {%endif%}>{{each_vet.name}}</option>
+        {% endfor %}
+        </select>
+    </div>

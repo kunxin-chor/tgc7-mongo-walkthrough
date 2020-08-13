@@ -1,0 +1,18 @@
+{% extends 'base.template.html' %}
+
+{% block content %}
+<form method="POST">
+    <div class="alert alert-danger">
+        Are you sure you want to delete the checkup for {{animal.name}} with the following information:
+        <ul>
+            <li>Diagnosis: {{animal.checkups[0].diagnosis}}</li>
+            <li>Treatment: {{animal.checkups[0].treatment}}</li>
+            <li>Vet: {{animal.checkups[0].vet_name}}</li>
+        </ul>
+    </div>
+    <input type="submit" value="Yes, delete" class="btn btn-danger"/>
+    <input type="hidden" name="animal_id" value="{{animal._id}}"/>
+    <a href="{{ url_for('view_animal_checkups', animal_id=animal._id )}}" class="btn btn-success">No, cancel</a>
+
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.template.html' %}
+
+{% block content %}
+<h1>Add new checkup for {{animal.name}}</h1>
+<form method="POST">
+    {% with  %}
+        {% set previous_values = {} %}
+        {%include 'checkup_form.template.html' %}
+    {% endwith %}
+    <input type="submit" value="Create" class="btn btn-primary"/>
+
+</form>
+{% endblock %}

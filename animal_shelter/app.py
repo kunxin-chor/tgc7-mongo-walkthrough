@@ -14,7 +14,6 @@ DB_NAME = "animal_shelter_actual"
 client = pymongo.MongoClient(MONGO_URI)
 db = client[DB_NAME]
 
-
 @app.route('/animals')
 def show_animals():
     all_animals = db.animals.find()

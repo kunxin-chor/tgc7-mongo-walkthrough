@@ -612,3 +612,207 @@ Break the results into pages. For that we need two things:
 
 * page size (number of results per page)
 * the total number of pages, which is  (total results / page size) - 1 
+
+## Create
+
+We need two routes. The first route to display the form.
+
+The second route is to process the form.
+
+1. Retrieve the information from the form
+
+2a. Check that all the information are valid (validation)
+
+2. Create the query that will add the information
+
+3. Execute the query
+
+The basic Create flow is : 1, 2 and 3
+
+We leave 2a till later.
+
+### Straighforward but tedious method
+
+```
+@app.route('/animals/create', methods=["POST"])
+def process_create_animal():
+
+    # retrieve the information from the form
+    name = request.form.get('name')
+    breed = request.form.get('breed')
+    age = request.form.get('age')
+    animal_type = request.form.get('type')
+
+    # FLAGS TECHNIQUE
+    name_too_short = False
+    age_is_not_a_number = False
+    age_is_not_positive = False
+    breed_too_short = False
+    animal_type_too_short = False
+
+    # check all the information are valid
+
+    # check if the name is longer than 3 characters
+    if len(name) < 4:
+        # if the name is not valid, remember that it is wrong
+        name_too_short = True
+
+    # check if age is valid number
+    if not age.isnumeric():
+        age_is_not_a_number = True
+
+    # check if age is a positive number
+    elif int(age) < 1:
+        age_is_not_positive = True
+
+    # check if the breed is longer than 3 characters
+    if len(breed) < 4:
+        # if the breed is not valid, remember that it is wrong
+        breed_too_short = True
+
+    # check if the type is longer than 3 characters
+    if len(animal_type) < 4:
+        animal_type_too_short = True
+
+    # if there are any errors, go back to the form and
+    # tell the user to try again
+    if (name_too_short or age_is_not_positive or
+        age_is_not_positive or breed_too_short
+            or animal_type_too_short):
+        return render_template('create_animal.template.html',
+                               age_is_not_a_number=age_is_not_a_number,
+                               age_is_not_positive=age_is_not_positive,
+                               breed_too_short=breed_too_short,
+                               animal_type_too_short=animal_type_too_short,
+                               name_too_short=name_too_short)
+
+    # if there are no errors, insert the new animal
+
+    # create the query
+    new_record = {
+        'name': name,
+        'breed': breed,
+        'age': age,
+        'animal_type': animal_type
+    }
+
+    # execute the query
+    db.animals.insert_one(new_record)
+
+    return redirect(url_for('show_animals'))
+    ```
+
+    ### Better method, uses an array to store the errors
+    ```
+    @app.route('/animals/create')
+def show_create_animal():
+    return render_template('create_animal.template.html')
+
+
+@app.route('/animals/create', methods=["POST"])
+def process_create_animal():
+
+    # retrieve the information from the form
+    name = request.form.get('name')
+    breed = request.form.get('breed')
+    age = request.form.get('age')
+    animal_type = request.form.get('type')
+
+    # ACCUMULATOR
+    errors = []
+
+    # check all the information are valid
+
+    # check if the name is longer than 3 characters
+    if len(name) < 4:
+        # if the name is not valid, remember that it is wrong
+        errors.append("Please ensure that name is more than 3 characters")
+
+    # check if age is valid number
+    if not age.isnumeric():
+        errors.append("Please ensure that age is a number")
+
+    # check if age is a positive number
+    elif float(age) < 1:
+        errors.append("Please ensure that age is positive")
+
+    # check if the breed is longer than 3 characters
+    if len(breed) < 4:
+        # if the breed is not valid, remember that it is wrong
+        errors.append("Please ensure breed is more than 3 characters")
+
+    # check if the type is longer than 2 characters
+    if len(animal_type) < 3:
+        errors.append("Please ensure that type is more than 3 characters")
+
+    # if there are any errors, go back to the form and
+    # tell the user to try again
+    if len(errors) > 0:
+        return render_template('create_animal.template.html', errors=errors,
+                               previous_values=request.form)
+
+    # if there are no errors, insert the new animal
+
+    # create the query
+    new_record = {
+        'name': name,
+        'breed': breed,
+        'age': age,
+        'animal_type': animal_type
+    }
+
+    # execute the query
+    db.animals.insert_one(new_record)
+
+    return redirect(url_for('show_animals'))
+    ```
+
+    Template file: `create_animal.template.html`
+    ```
+    {% extends 'base.template.html' %}
+
+{% block content %}
+
+
+<ul>
+{% for each_error in errors %}
+    <li>{{each_error}}</li>
+{% endfor %}
+</ul>
+
+
+<form method="POST">
+{%with %}
+    {% if not previous_values %}
+        {% set previous_values = {} %}
+    {% endif %}
+
+    {% include 'animal_form.template.html' %}
+    <input type="submit" value="Create" class="btn btn-primary">
+{%endwith%}
+</form>
+
+
+{% endblock %}
+```
+
+Template file: `animal_form.template.html`
+```
+  
+    <div>
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" value="{{previous_values.name}}">
+    </div>
+    <div>
+        <label>Age</label>
+        <input type="text" name="age" class="form-control" value="{{previous_values.age}}">
+    </div>
+    <div>
+        <label>Breed</label>
+        <input type="text" name="breed" class="form-control" value="{{previous_values.breed}}">        
+    </div>
+    <div>
+        <label>Type</label>
+        <input type="text" name="type" class="form-control" value="{{previous_values.type}}">
+    </div>
+```

@@ -1,0 +1,37 @@
+  
+    <div>
+        <label>Name</label>
+        <input type="text" name="name" class="form-control {% if 'name_too_short' in errors %} is-invalid {%endif%}" value="{{previous_values.name}}">
+        {% if 'name_too_short' in errors %}
+        <div class="invalid-feedback">
+            {{errors.name_too_short}}
+        </div>
+        {% endif %}
+    </div>
+    <div>
+        <label>Age</label>
+        <input type="text" name="age" class="form-control {%if 'age_is_not_a_number' in errors or 'age_is_not_positive' in errors%} is-invalid {%endif%}" value="{{previous_values.age}}">
+         {%if 'age_is_not_a_number' in errors or 'age_is_not_positive' in errors%}
+         <div class="invalid-feedback">
+            {{ errors.age_is_not_a_number or errors.age_is_not_positive}} 
+         {%endif%}
+         </div>
+    </div>
+    <div>
+        <label>Breed</label>
+        <input type="text" name="breed" class="form-control {%if 'breed_too_short' in errors %} is-invalid {%endif%}" value="{{previous_values.breed}}">        
+        {%if 'breed_too_short' in errors %}
+        <div class="invalid-feedback">
+            {{errors.breed_too_short}}
+        </div>
+        {%endif%}
+    </div>
+    <div>
+        <label>Type</label>        
+        <input type="text" name="type" class="form-control {%if 'type_too_short' in errors %} is-invalid {%endif%}" value="{{previous_values.type}}">
+         {%if 'type_too_short' in errors %}
+         <div class="invalid-feedback">
+            {{ errors.type_too_short}}
+         </div>            
+        {%endif%}
+    </div>

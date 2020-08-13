@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 import pymongo
 from dotenv import load_dotenv
@@ -8,6 +8,7 @@ import datetime
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY')
 
 MONGO_URI = os.environ.get('MONGO_URI')
 DB_NAME = "animal_shelter_actual"
@@ -18,7 +19,7 @@ db = client[DB_NAME]
 
 @app.route('/animals')
 def show_animals():
-    all_animals = db.animals.find()
+    all_animals = db.animals.find()  
 
     # we pass an empty dictionary to the template so that it won't cause error
     # alternatively, a better method is to check if the variable exists
@@ -71,8 +72,11 @@ def process_create_animal():
     # if there are any errors, go back to the form and
     # tell the user to try again
     if len(errors) > 0:
+        animal_types = db.animal_types.find()
+        flash("Unable to create animal", "danger")
         return render_template('create_animal.template.html', errors=errors,
-                               previous_values=request.form)
+                               previous_values=request.form,
+                               animal_types=animal_types)
 
     # fetch the information about the animal type by its id
     animal_type = db.animal_types.find_one({
@@ -94,6 +98,8 @@ def process_create_animal():
 
     # execute the query
     db.animals.insert_one(new_record)
+
+    flash("New animal has been added", "success")
 
     return redirect(url_for('show_animals'))
 

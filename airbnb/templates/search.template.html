@@ -5,13 +5,28 @@
 
 <form method="GET" class="form-inline">
     <label>Listing Name:</label>
-    <input type="text" name="listing_name" class="form-control">
-    <input type="text" name="country" class="form-control">
+    <input type="text" name="listing_name" class="form-control" value="{{required_listing_name}}" placeholder="Enter name">
+    <input type="text" name="country" class="form-control" value="{{required_country}}" placeholder="Enter country">
     <input type="submit" value="Search"/>
 </form>
 
 
 <h3>Results</h3>
+
+{% if page_number <= number_of_pages %}
+<a href="{{ url_for('search', page_number=page_number+1, listing_name=required_listing_name, country=required_country ) }}">Next Page</a>
+{% endif%}
+
+{% for page_no in range(number_of_pages+1) %}
+<a href="{{ url_for('search', page_number=page_no, listing_name=required_listing_name, country=required_country ) }}">{{page_no+1}}</a>
+{% endfor %}
+
+
+{% if page_number > 0 %}
+<a href="{{ url_for('search', page_number=page_number-1, listing_name=required_listing_name, country=required_country) }}">Previous Page</a>
+{%endif%}
+
+
 
 <ul>
     {% for each_listing in listings %}

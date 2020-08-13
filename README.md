@@ -605,3 +605,10 @@ def search():
     # Pass the datat to the template
     return render_template('show_listings.template.html', listings=cursor)
 ```
+
+### Pagination
+
+Break the results into pages. For that we need two things:
+
+* page size (number of results per page)
+* the total number of pages, which is  (total results / page size) - 1 

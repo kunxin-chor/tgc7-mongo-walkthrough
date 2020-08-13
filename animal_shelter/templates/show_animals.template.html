@@ -1,0 +1,13 @@
+{% extends 'base.template.html' %}
+
+{%block content %}
+<h1>Animals</h1>
+
+<ul>
+{% for each_animal in animals %}
+<li>{{each_animal.name}}</li>
+{% endfor %}
+
+</ul>
+
+{%endblock%}

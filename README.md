@@ -816,3 +816,41 @@ Template file: `animal_form.template.html`
         <input type="text" name="type" class="form-control" value="{{previous_values.type}}">
     </div>
 ```
+
+### Update 
+
+For displaying the form:
+
+1. Fetch the original record that we want to change
+
+2. Display the form, with the original record
+
+When we process the form:
+
+1. Know the Id of the original record
+
+2. Extract out the form fields
+
+3A. check if is valid
+
+3. Modify the record
+
+3. Persist the change
+
+Make sure to import in ObjectId:
+
+```
+from bson.objectid import ObjectId
+```
+
+### Delete
+
+1. Fetch the record that we want to delete
+
+2. Ask for confirmation
+
+To actually delete:
+
+1. Fetch the record that we want to delete
+
+2. Then actually delete

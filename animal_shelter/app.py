@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import os
 import pymongo
 from dotenv import load_dotenv
+from bson.objectid import ObjectId
 
 load_dotenv()
 
@@ -82,7 +83,7 @@ def process_create_animal():
         'name': name,
         'breed': breed,
         'age': age,
-        'animal_type': animal_type
+        'type': animal_type
     }
 
     # execute the query
@@ -90,6 +91,57 @@ def process_create_animal():
 
     return redirect(url_for('show_animals'))
 
+
+@app.route('/animals/update/<animal_id>')
+def show_update_animal(animal_id):
+    animal = db.animals.find_one({
+        '_id': ObjectId(animal_id)
+    })
+
+    return render_template('update_animal.template.html', animal=animal)
+
+
+@app.route('/animals/update/<animal_id>', methods=["POST"])
+def process_update_animal(animal_id):
+
+    # extract out the form fields
+    name = request.form.get('name')
+    breed = request.form.get('breed')
+    age = request.form.get('age')
+    animal_type = request.form.get('type')
+
+    # check if valid
+
+    # modify the record
+    db.animals.update_one({
+        '_id': ObjectId(animal_id)
+    }, {
+        '$set': {
+            'name': name,
+            'breed': breed,
+            'age': age,
+            'type': animal_type
+        }
+    })
+
+    return redirect(url_for('show_animals'))
+
+
+@app.route('/animals/delete/<animal_id>')
+def show_delete_animal(animal_id):
+    animal = db.animals.find_one({
+        '_id': ObjectId(animal_id)
+    })
+    return render_template('show_delete_animal.template.html', animal=animal)
+
+
+@app.route('/animals/delete/<animal_id>', methods=["POST"])
+def process_delete_animal(animal_id):
+    db.animals.remove({
+        '_id': ObjectId(animal_id)
+    })
+
+    return redirect(url_for('show_animals'))
 
 # "magic code" -- boilerplate
 if __name__ == '__main__':

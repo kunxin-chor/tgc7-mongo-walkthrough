@@ -1,4 +1,3 @@
-  
     <div>
         <label>Name</label>
         <input type="text" name="name" class="form-control {% if 'name_too_short' in errors %} is-invalid {%endif%}" value="{{previous_values.name}}">
@@ -14,8 +13,8 @@
          {%if 'age_is_not_a_number' in errors or 'age_is_not_positive' in errors%}
          <div class="invalid-feedback">
             {{ errors.age_is_not_a_number or errors.age_is_not_positive}} 
-         {%endif%}
          </div>
+         {%endif%}         
     </div>
     <div>
         <label>Breed</label>

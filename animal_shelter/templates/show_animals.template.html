@@ -5,7 +5,10 @@
 
 <ul>
 {% for each_animal in animals %}
-<li>{{each_animal.name}}</li>
+<li>
+    <a href="{{ url_for('show_update_animal', animal_id=each_animal._id) }}">{{each_animal.name}}</a>
+    <a href="{{ url_for('show_delete_animal', animal_id=each_animal._id) }}" class="btn btn-danger btn-sm">Delete</a>
+</li>
 {% endfor %}
 </ul>
 

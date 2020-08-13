@@ -1,0 +1,14 @@
+{% extends 'base.template.html' %}
+
+{% block content %}
+<h3>Update animal: {{animal.name}}</h3>
+
+<form method="POST">
+{%with %}
+    {%set previous_values=animal %}
+    {% include 'animal_form.template.html' %}
+{%endwith%}
+<input type="submit" value="Update"/>
+</form>
+
+{% endblock %}

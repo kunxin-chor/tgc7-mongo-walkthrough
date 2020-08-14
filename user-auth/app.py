@@ -3,6 +3,7 @@ import pymongo  # mongo
 import flask_login  # handle user login
 import os
 from dotenv import load_dotenv  # load in .env files
+from passlib.hash import pbkdf2_sha256
 
 app = Flask(__name__)
 
@@ -68,7 +69,7 @@ def process_register():
     # Create the new user
     db.users.insert_one({
         'email': email,
-        'password': password
+        'password': pbkdf2_sha256.hash(password)
     })
 
     flash("Sign up successful", "success")
@@ -94,7 +95,7 @@ def process_login():
     })
 
     # if the user exists, chec if the password matches
-    if user and user["password"] == password:
+    if user and pbkdf2_sha256.verify(password, user["password"]):
         # if the password matches, authorize the user
         user_object = User()
         user_object.id = user["email"]

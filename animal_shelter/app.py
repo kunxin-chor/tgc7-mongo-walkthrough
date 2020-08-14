@@ -4,6 +4,7 @@ import pymongo
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
 import datetime
+import animals
 
 load_dotenv()
 
@@ -85,19 +86,21 @@ def process_create_animal():
 
     # if there are no errors, insert the new animal
 
-    # create the query
-    new_record = {
-        'name': name,
-        'breed': breed,
-        'age': age,
-        'type': {
-            '_id': ObjectId(animal_type_id),
-            'name': animal_type["name"]
-        }
-    }
+    # # create the query
+    # new_record = {
+    #     'name': name,
+    #     'breed': breed,
+    #     'age': age,
+    #     'type': {
+    #         '_id': ObjectId(animal_type_id),
+    #         'name': animal_type["name"]
+    #     }
+    # }
 
-    # execute the query
-    db.animals.insert_one(new_record)
+    # # execute the query
+    # db.animals.insert_one(new_record)
+
+    animals.create_animal(db.animals, name, breed, age, animal_type)
 
     flash("New animal has been added", "success")
 

@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 import datetime
 from bson.json_util import dumps
 import json
+import animals
 
 load_dotenv()
 
@@ -41,19 +42,7 @@ def create_animal():
         '_id': ObjectId(animal_type_id)
     })
 
-    # create the query
-    new_record = {
-        'name': name,
-        'breed': breed,
-        'age': age,
-        'type': {
-            '_id': ObjectId(animal_type_id),
-            'name': animal_type["name"]
-        }
-    }
-
-    # execute the query
-    results = db.animals.insert_one(new_record)
+    animals.create_animal(db.animals, name, breed, age, animal_type)
 
     # return the newly created ObjectId of the animal
     return {
@@ -71,25 +60,28 @@ def update_animal(animal_id):
 
     # check if valid
 
-    # modify the record
+    # modify the record 
 
     animal_type = db.animal_types.find_one({
         '_id': ObjectId(animal_type_id)
     })
 
-    db.animals.update_one({
-        '_id': ObjectId(animal_id)
-    }, {
-        '$set': {
-            'name': name,
-            'breed': breed,
-            'age': age,
-            'type':  {
-                '_id': ObjectId(animal_type_id),
-                'name': animal_type["name"]
-            }
-        }
-    })
+    # db.animals.update_one({
+    #     '_id': ObjectId(animal_id)
+    # }, {
+    #     '$set': {
+    #         'name': name,
+    #         'breed': breed,           
+    #         'age': age,
+    #         'type':  {
+    #             '_id': ObjectId(animal_type_id),
+    #             'name': animal_type["name"]
+    #         }
+    #     }
+    # })
+
+    animals.update_animal(db.animals, animal_id, name, breed,
+                          age, animal_type)
 
     return {
         "status": "OK"

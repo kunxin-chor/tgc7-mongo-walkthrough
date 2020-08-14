@@ -8,11 +8,15 @@ from bson.json_util import dumps
 import json
 import animals
 import services
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
+
+# enable cross site origin request
+CORS(app)  # This will enable CORS for all routes
 
 MONGO_URI = os.environ.get('MONGO_URI')
 DB_NAME = "animal_shelter_actual"
@@ -47,7 +51,6 @@ def create_animal():
 
     results = services.create_animal_service(request.json, db)
 
-
     # return the newly created ObjectId of the animal
     return {
         'inserted_id': str(results.inserted_id)
@@ -64,7 +67,7 @@ def update_animal(animal_id):
 
     # check if valid
 
-    # modify the record 
+    # modify the record
 
     animal_type = db.animal_types.find_one({
         '_id': ObjectId(animal_type_id)
@@ -75,7 +78,7 @@ def update_animal(animal_id):
     # }, {
     #     '$set': {
     #         'name': name,
-    #         'breed': breed,           
+    #         'breed': breed,
     #         'age': age,
     #         'type':  {
     #             '_id': ObjectId(animal_type_id),

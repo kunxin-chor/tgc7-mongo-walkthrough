@@ -13,7 +13,8 @@ def create_animal(collection, name, breed, age, animal_type):
     }
 
     # execute the query
-    collection.insert_one(new_record)
+    results = collection.insert_one(new_record)
+    return results
 
 
 def update_animal(collection, animal_id, name, breed, age, animal_type):

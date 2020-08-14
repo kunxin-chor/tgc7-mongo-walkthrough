@@ -1,3 +1,14 @@
+# Requirements
+
+```
+pip3 install pymongo
+pip3 install dnspython
+pip3 install flask
+pip3 install flask-login
+pip3 install python-dotenv
+```
+
+
 # See all databases
 
 ```

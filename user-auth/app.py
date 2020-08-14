@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 import pymongo  # mongo
 import flask_login  # handle user login
 import os
@@ -17,6 +17,20 @@ app.secret_key = SECRET_KEY
 # connect to the Mongo database
 client = pymongo.MongoClient(MONGO_URI)
 db = client["sample_app"]
+
+
+class User(flask_login.UserMixin):
+    pass
+
+
+# init the flask-login for our app
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+
+
+@app.route('/')
+def home():
+    return render_template('home.template.html')
 
 
 @app.route('/register')
@@ -39,6 +53,8 @@ def process_register():
         'password': password
     })
 
+    flash("Sign up successful", "success")
+
     # Redirect to the login page
     return redirect(url_for('login'))
 
@@ -50,7 +66,28 @@ def login():
 
 @app.route('/login', methods=["POST"])
 def process_login():
-    return "processing login wip"
+    # retrieve the email and the password from the form
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    # check if the user's email exists in the database
+    user = db.users.find_one({
+        'email': email
+    })
+
+    # if the user exists, chec if the password matches
+    if user and user["password"] == password:
+        # if the password matches, authorize the user
+        flask_login.login_user(user)
+
+        # redirect to a page and says login is successful
+        flash("Login successful", "success")
+        return redirect(url_for('home'))
+
+    # if the login failed, return back to the login page
+    else:
+        flash("Wrong email or password", "danger")
+        return redirect(url_for('login'))
 
 
 # "magic code" -- boilerplate

@@ -7,6 +7,7 @@ import datetime
 from bson.json_util import dumps
 import json
 import animals
+import services
 
 load_dotenv()
 
@@ -31,18 +32,21 @@ def get_all_animals():
 @app.route('/api/animals', methods=["POST"])
 def create_animal():
 
-    # extract out all the fields from the request
-    name = request.json.get('name')
-    breed = request.json.get('breed')
-    animal_type_id = request.json.get('type')
-    age = request.json.get('age')
+    # # extract out all the fields from the request
+    # name = request.json.get('name')
+    # breed = request.json.get('breed')
+    # animal_type_id = request.json.get('type')
+    # age = request.json.get('age')
 
-    # create the new record
-    animal_type = db.animal_types.find_one({
-        '_id': ObjectId(animal_type_id)
-    })
+    # # create the new record
+    # animal_type = db.animal_types.find_one({
+    #     '_id': ObjectId(animal_type_id)
+    # })
 
-    animals.create_animal(db.animals, name, breed, age, animal_type)
+    # results = animals.create_animal(db.animals, name, breed, age, animal_type)
+
+    results = services.create_animal_service(request.json, db)
+
 
     # return the newly created ObjectId of the animal
     return {

@@ -80,11 +80,11 @@ def process_create_animal():
                                animal_types=animal_types)
 
     # fetch the information about the animal type by its id
-    animal_type = db.animal_types.find_one({
-        '_id': ObjectId(animal_type_id)
-    })
+    # animal_type = db.animal_types.find_one({
+    #     '_id': ObjectId(animal_type_id)
+    # })
 
-    # if there are no errors, insert the new animal
+    # # if there are no errors, insert the new animal
 
     # # create the query
     # new_record = {
@@ -100,7 +100,9 @@ def process_create_animal():
     # # execute the query
     # db.animals.insert_one(new_record)
 
-    animals.create_animal(db.animals, name, breed, age, animal_type)
+    # animals.create_animal(db.animals, name, breed, age, animal_type)
+
+    services.create_animal_service(request.form, db)
 
     flash("New animal has been added", "success")
 

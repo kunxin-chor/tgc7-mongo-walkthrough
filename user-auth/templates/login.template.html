@@ -1,0 +1,17 @@
+{% extends 'base.template.html' %}
+
+{% block content %}
+<h1>Login</h1>
+
+<form  method="POST">
+    <div>
+        <label>Email</label>
+        <input type="text" class="form-control" name="email"/>
+    </div>
+    <div>
+        <label>Password</label>
+        <input type="password" class="form-control" name="password"/>
+    </div>
+    <input type="submit" value="Register" class="btn btn-primary mt-3"/>
+</form>
+{% endblock %}

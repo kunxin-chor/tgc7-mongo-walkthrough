@@ -24,6 +24,34 @@ def register():
     return render_template('register.template.html')
 
 
+@app.route('/register', methods=["POST"])
+def process_register():
+
+    # extract out the email and password
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    # TODO: Vadliate if the email and password are proper
+
+    # Create the new user
+    db.users.insert_one({
+        'email': email,
+        'password': password
+    })
+
+    # Redirect to the login page
+    return redirect(url_for('login'))
+
+
+@app.route('/login')
+def login():
+    return render_template('login.template.html')
+
+
+@app.route('/login', methods=["POST"])
+def process_login():
+    return "processing login wip"
+
 
 # "magic code" -- boilerplate
 if __name__ == '__main__':

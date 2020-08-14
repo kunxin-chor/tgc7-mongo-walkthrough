@@ -22,6 +22,12 @@ db = client["sample_app"]
 class User(flask_login.UserMixin):
     pass
 
+# init the flask-login for our app
+login_manager = flask_login.LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+
 @login_manager.user_loader
 def user_loader(email):
     user = db.users.find_one({
@@ -38,11 +44,6 @@ def user_loader(email):
     else:
         # if the email does not exist in the database, report an error
         return None
-
-
-# init the flask-login for our app
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
 
 
 @app.route('/')
@@ -107,6 +108,20 @@ def process_login():
     else:
         flash("Wrong email or password", "danger")
         return redirect(url_for('login'))
+
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    flash('Logged out', 'success')
+    return redirect(url_for('login'))
+
+
+
+@app.route('/secret')
+@flask_login.login_required
+def secret():
+    return "You are in top secret area"
 
 
 # "magic code" -- boilerplate

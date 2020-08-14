@@ -1,5 +1,10 @@
-{% extends 'base.template.html' %
+{% extends 'base.template.html' %}
 
 {% block content %}
 <h1>Welcome!</h1>
+{% if current_user.is_authenticated %}
+    Hello, {{current_user.id}}
+{% else %}
+    Please login
+{% endif %}
 {% endblock %}

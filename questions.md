@@ -122,6 +122,47 @@ db.companies.find({
 # sample_supplies
 Refer to the `sales` collection. Show all the fields to prove that the query is correct.
 1. Find all purchases made at Denver
+```
+db.sales.find({
+    'storeLocation':'Denver'
+}, {
+    'saleDate':1, 'storeLocation':1
+}).pretty()
+```
 2. Find all purchases that include the items notepad 
+```
+db.sales.find({
+    'items.name':'notepad'
+}, {
+    'items.$.name':1
+})
+```
+
+2b. Find all purchases that include the items notepad and envelopes
+```
+db.sales.find({
+    'items.name': {
+        '$all': ['notepad', 'envelopes' ]
+    }
+}, {
+    'items.name':1
+}).pretty()
+```
+
 3. Count how many purchases used coupons
+```
+db.sales.find({
+    'couponUsed':true
+}).count()
+```
 4. Find all purchases made by males who are 45 years old and above
+```
+db.sales.find({
+    'customer.gender':'M',
+    'customer.age': {
+        '$gte':45
+    }
+}, {
+    'customer':1
+}).pretty()
+```

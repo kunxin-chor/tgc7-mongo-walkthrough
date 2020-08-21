@@ -38,9 +38,11 @@ def user_loader(email):
 
     # if the email exists
     if user:
-        # create a User object that represents the user
+        # create a User object that represents the user session
         user_object = User()
+        # store the email of the user in the session as `id`
         user_object.id = user["email"]
+        # store the unique id of the user in the session as `account_id`
         user_object.account_id = user["_id"]
         # return the User object
         return user_object
@@ -100,8 +102,12 @@ def process_login():
     if user and pbkdf2_sha256.verify(password, user["password"]):
         # if the password matches, authorize the user
         user_object = User()
+        # save the email of the user in the session as the property `id`
         user_object.id = user["email"]
+        # save the unique id of the user in the session as the propert
+        # `account_id`
         user_object.account_id = user["_id"]
+        # create the user session
         flask_login.login_user(user_object)
 
         # redirect to a page and says login is successful

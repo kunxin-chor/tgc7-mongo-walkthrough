@@ -103,6 +103,7 @@ def process_create_animal():
     # animals.create_animal(db.animals, name, breed, age, animal_type)
 
     services.create_animal_service(request.form, db)
+    
 
     flash("New animal has been added", "success")
 

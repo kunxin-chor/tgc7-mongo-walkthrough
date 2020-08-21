@@ -23,6 +23,7 @@ db = client["sample_app"]
 class User(flask_login.UserMixin):
     pass
 
+
 # init the flask-login for our app
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
@@ -32,7 +33,7 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def user_loader(email):
     user = db.users.find_one({
-        'email':email
+        'email': email
     })
 
     # if the email exists
@@ -40,7 +41,8 @@ def user_loader(email):
         # create a User object that represents the user
         user_object = User()
         user_object.id = user["email"]
-         # return the User object
+        user_object.account_id = user["_id"]
+        # return the User object
         return user_object
     else:
         # if the email does not exist in the database, report an error
@@ -99,6 +101,7 @@ def process_login():
         # if the password matches, authorize the user
         user_object = User()
         user_object.id = user["email"]
+        user_object.account_id = user["_id"]
         flask_login.login_user(user_object)
 
         # redirect to a page and says login is successful
@@ -117,6 +120,13 @@ def logout():
     flash('Logged out', 'success')
     return redirect(url_for('login'))
 
+
+@app.route('/profile')
+@flask_login.login_required
+def profile():
+    email = flask_login.current_user.id
+    account_id = flask_login.current_user.account_id
+    return f"Email = {email}, account_id={account_id}"
 
 
 @app.route('/secret')
